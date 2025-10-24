@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveFinder - Мои мэтчи{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-fire text-danger me-2"></i>Мои мэтчи
+            </h2>
+        </div>
+    </div>
+
+    <!-- Взаимные лайки -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-heart me-2"></i>Взаимные симпатии
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if mutual_matches %}
+                    <div class="row">
+                        {% for match in mutual_matches %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card profile-card h-100">
+                                <img src="{{ match.profile_photo }}" class="card-img-top" alt="Profile" style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ match.name }}, {{ match.age }}</h6>
+                                    <p class="card-text small text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ match.city }}
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary btn-sm send-invite" data-user-id="{{ match.id }}">
+                                            <i class="fas fa-calendar-plus me-1"></i>Пригласить
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm start-chat" data-user-id="{{ match.id }}">
+                                            <i class="fas fa-comment me-1"></i>Написать
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-heart-broken fa-3x text-muted mb-3"></i>
+                        <h5>Пока нет взаимных симпатий</h5>
+                        <p class="text-muted">Продолжайте знакомиться с людьми, чтобы найти мэтчи!</p>
+                        <a href="{% url 'discover' %}" class="btn btn-danger">
+                            <i class="fas fa-search me-2"></i>Начать поиск
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Приглашения на свидания -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>Приглашения на свидания
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if invitations %}
+                    <div class="list-group">
+                        {% for invite in invitations %}
+                        <div class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="{{ invite.from_user_photo }}" class="rounded-circle" width="60" height="60" alt="Profile">
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="mb-1">{{ invite.from_user_name }}</h6>
+                                    <p class="mb-1">{{ invite.message }}</p>
+                                    <small class="text-muted">{{ invite.created_at }}</small>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    {% if invite.status == 'pending' %}
+                                    <button class="btn btn-success btn-sm accept-invite" data-invite-id="{{ invite.id }}">
+                                        <i class="fas fa-check me-1"></i>Принять
+                                    </button>
+                                    <button class="btn btn-danger btn-sm reject-invite" data-invite-id="{{ invite.id }}">
+                                        <i class="fas fa-times me-1"></i>Отклонить
+                                    </button>
+                                    {% elif invite.status == 'accepted' %}
+                                    <span class="badge bg-success">Принято</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Отклонено</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-3">
+                        <p class="text-muted mb-0">Нет активных приглашений на свидания</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Принять приглашение
+    document.querySelectorAll('.accept-invite').forEach(button => {
+        button.addEventListener('click', function() {
+            const inviteId = this.dataset.inviteId;
+            // API call to accept invitation
+            console.log('Accept invite:', inviteId);
+        });
+    });
+
+    // Отклонить приглашение
+    document.querySelectorAll('.reject-invite').forEach(button => {
+        button.addEventListener('click', function() {
+            const inviteId = this.dataset.inviteId;
+            // API call to reject invitation
+            console.log('Reject invite:', inviteId);
+        });
+    });
+
+    // Отправить приглашение
+    document.querySelectorAll('.send-invite').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            const message = prompt('Введите сообщение для приглашения:');
+            if (message) {
+                // API call to send invitation
+                console.log('Send invite to:', userId, 'Message:', message);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

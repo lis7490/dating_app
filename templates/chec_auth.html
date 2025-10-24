@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div id="loading" class="mb-3">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p>Проверка авторизации...</p>
+                    </div>
+                    <div id="success" class="d-none">
+                        <i class="fas fa-check-circle fa-2x text-success mb-3"></i>
+                        <p>Авторизация успешна! Перенаправляем...</p>
+                    </div>
+                    <div id="error" class="d-none">
+                        <i class="fas fa-exclamation-triangle fa-2x text-danger mb-3"></i>
+                        <p id="error-message"></p>
+                        <a href="{% url 'login' %}" class="btn btn-primary">Войти снова</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    
+    if (!accessToken) {
+        showError('Токен не найден. Пожалуйста, войдите снова.');
+        return;
+    }
+    
+    // Проверяем токен
+    fetch('/api/users/verify-token/', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // Токен валиден, переходим на профиль
+            showSuccess();
+            setTimeout(() => {
+                window.location.href = '{% url "profile" %}';
+            }, 1000);
+        } else {
+            // Пробуем обновить токен
+            return refreshToken();
+        }
+    })
+    .catch(error => {
+        showError('Ошибка проверки токена: ' + error.message);
+    });
+    
+    function refreshToken() {
+        if (!refreshToken) {
+            showError('Refresh token не найден');
+            return;
+        }
+        
+        fetch('/api/users/token/refresh/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                refresh: refreshToken
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Refresh failed');
+        })
+        .then(data => {
+            localStorage.setItem('accessToken', data.access);
+            showSuccess();
+            setTimeout(() => {
+                window.location.href = '{% url "profile" %}';
+            }, 1000);
+        })
+        .catch(error => {
+            showError('Не удалось обновить сессию: ' + error.message);
+        });
+    }
+    
+    function showSuccess() {
+        document.getElementById('loading').classList.add('d-none');
+        document.getElementById('success').classList.remove('d-none');
+    }
+    
+    function showError(message) {
+        document.getElementById('loading').classList.add('d-none');
+        document.getElementById('error').classList.remove('d-none');
+        document.getElementById('error-message').textContent = message;
+        // Очищаем невалидные токены
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveFinder - Главная{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row align-items-center min-vh-75">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold text-dark mb-4">
+                Найди свою <span class="text-danger">вторую половинку</span>
+            </h1>
+            <p class="lead mb-4">
+                LoveFinder помогает людям находить настоящие отношения на основе общих интересов и ценностей.
+            </p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'discover' %}" class="btn btn-danger btn-lg px-4 me-md-2">
+                        <i class="fas fa-search me-2"></i>Начать поиск
+                    </a>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-danger btn-lg px-4">
+                        <i class="fas fa-user me-2"></i>Мой профиль
+                    </a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-danger btn-lg px-4 me-md-2">
+                        <i class="fas fa-user-plus me-2"></i>Начать бесплатно
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-danger btn-lg px-4">
+                        <i class="fas fa-sign-in-alt me-2"></i>Войти
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <img src="https://via.placeholder.com/600x400" alt="Dating App" class="img-fluid rounded shadow">
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row py-5">
+        <div class="col-12 text-center mb-5">
+            <h2 class="fw-bold">Почему выбирают LoveFinder?</h2>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="feature-icon mb-3">
+                <i class="fas fa-heart fa-3x text-danger"></i>
+            </div>
+            <h4>Умный подбор</h4>
+            <p>Алгоритмы подбирают партнеров на основе ваших интересов и предпочтений</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="feature-icon mb-3">
+                <i class="fas fa-shield-alt fa-3x text-primary"></i>
+            </div>
+            <h4>Безопасность</h4>
+            <p>Ваши данные защищены, а общение проходит в безопасной среде</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="feature-icon mb-3">
+                <i class="fas fa-users fa-3x text-success"></i>
+            </div>
+            <h4>Сообщество</h4>
+            <p>Тысячи реальных людей ищут серьезные отношения</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

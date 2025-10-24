@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveFinder - Вход{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="card-title">
+                            <i class="fas fa-heart text-danger me-2"></i>LoveFinder
+                        </h2>
+                        <p class="text-muted">Войдите в свой аккаунт</p>
+                    </div>
+
+                    <form id="loginForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email адрес</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="your@email.com" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Пароль</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       placeholder="Введите пароль" required>
+                                <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me">
+                            <label class="form-check-label" for="rememberMe">Запомнить меня</label>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Войти
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="#" class="text-decoration-none">Забыли пароль?</a>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-0">Еще нет аккаунта?</p>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary mt-2">
+                            <i class="fas fa-user-plus me-2"></i>Создать аккаунт
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo аккаунты -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">Demo аккаунты:</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Email: user1@demo.com</small><br>
+                            <small class="text-muted">Пароль: demo123</small>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Email: user2@demo.com</small><br>
+                            <small class="text-muted">Пароль: demo123</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Переключение видимости пароля
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+
+    // Обработка формы входа
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const loginButton = document.querySelector('#loginForm button[type="submit"]');
+        loginButton.disabled = true;
+        loginButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Вход...';
+
+        // Используем JWT endpoint
+        fetch('/api/token/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                username: email,  // JWT ожидает username, используем email
+                password: password
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка входа: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Сохраняем токен в localStorage
+            localStorage.setItem('accessToken', data.access);
+            localStorage.setItem('refreshToken', data.refresh);
+            
+            // Перенаправляем на дашборд
+            window.location.href = '{% url "dashboard" %}';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ошибка входа: Проверьте email и пароль');
+        })
+        .finally(() => {
+            loginButton.disabled = false;
+            loginButton.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Войти';
+        });
+    });
+});
+</script>
+{% endblock %}

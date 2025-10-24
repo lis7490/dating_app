@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveFinder - Дашборд{% endblock %}
+
+{% block content %}
+<a href="{% url 'profile' %}" class="btn btn-primary" onclick="return checkAndNavigate()">
+    <i class="fas fa-user me-2"></i>Мой профиль</a>
+<script>
+function checkAndNavigate() {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    
+    console.log('Access Token:', accessToken);
+    console.log('Refresh Token:', refreshToken);
+    
+    if (!accessToken) {
+        alert('Требуется авторизация. Перенаправляем на вход.');
+        window.location.href = '{% url "login" %}';
+        return false;
+    }
+    
+    // Проверяем валидность токена
+    fetch('/api/users/verify-token/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // Токен валиден, переходим на профиль
+            return true;
+        } else {
+            // Пробуем обновить токен
+            return refreshAccessToken();
+        }
+    })
+    .catch(error => {
+        console.error('Token verification failed:', error);
+        attemptTokenRefresh();
+        return false;
+    });
+    
+    return true;
+}
+
+function refreshAccessToken() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    
+    if (!refreshToken) {
+        redirectToLogin();
+        return false;
+    }
+    
+    fetch('/api/users/token/refresh/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            refresh: refreshToken
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Token refresh failed');
+    })
+    .then(data => {
+        localStorage.setItem('accessToken', data.access);
+        // Повторяем переход после обновления токена
+        window.location.href = '{% url "profile" %}';
+    })
+    .catch(error => {
+        console.error('Token refresh error:', error);
+        redirectToLogin();
+    });
+}
+
+function redirectToLogin() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    alert('Сессия истекла. Пожалуйста, войдите снова.');
+    window.location.href = '{% url "login" %}';
+}
+</script>
+<div class="container py-4">
+    <div class="row">
+        <!-- Статистика -->
+        <div class="col-12 mb-4">
+            <h2>Моя активность</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="text-primary">12</h3>
+                            <p>Новых просмотров</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="text-success">5</h3>
+                            <p>Взаимных лайков</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="text-warning">3</h3>
+                            <p>Новых сообщений</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="text-info">24</h3>
+                            <p>Всего мэтчей</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Быстрый поиск -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Быстрый поиск партнеров</h4>
+                </div>
+                <div class="card-body">
+                    <p>Настройте фильтры для поиска идеальных matches</p>
+                    <a href="{% url 'discover' %}" class="btn btn-danger">
+                        <i class="fas fa-search me-2"></i>Начать поиск
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Последние активности -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Последние активности</h4>
+                </div>
+                <div class="card-body">
+                    <div class="activity-list">
+                        <div class="activity-item mb-2">
+                            <small class="text-muted">Сегодня</small>
+                            <p class="mb-1">Мария оценила ваш профиль</p>
+                        </div>
+                        <div class="activity-item mb-2">
+                            <small class="text-muted">Вчера</small>
+                            <p class="mb-1">У вас новый мэтч с Алексеем</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="alert alert-info">
+    <h6>Отладочная информация Dashboard:</h6>
+    <p>User: {{ user }}</p>
+    <p>Authenticated: {{ user.is_authenticated }}</p>
+    <p>Email: {{ user.email }}</p>
+</div>
+{% endblock %}

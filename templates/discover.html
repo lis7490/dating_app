@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveFinder - Поиск{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Фильтры -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Фильтры поиска</h5>
+                </div>
+                <div class="card-body">
+                    <form id="discovery-filters">
+                        <div class="mb-3">
+                            <label class="form-label">Пол</label>
+                            <select class="form-select" name="gender">
+                                <option value="">Любой</option>
+                                <option value="M">Мужской</option>
+                                <option value="F">Женский</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Возраст</label>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="number" class="form-control" placeholder="От" name="min_age">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" placeholder="До" name="max_age">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Город</label>
+                            <input type="text" class="form-control" name="city" placeholder="Введите город">
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100">Применить фильтры</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Профили -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Рекомендуемые профили</h5>
+                    <button class="btn btn-outline-danger btn-sm" id="refresh-profiles">
+                        <i class="fas fa-sync-alt me-1"></i>Обновить
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="profiles-container" class="text-center">
+                        <p>Загрузка профилей...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Здесь будет JavaScript для загрузки и взаимодействия с профилями
+document.getElementById('discovery-filters').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Логика применения фильтров
+});
+</script>
+{% endblock %}

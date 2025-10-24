@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveFinder - История{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-history me-2"></i>История активности
+            </h2>
+        </div>
+    </div>
+
+    <!-- Навигация по истории -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="historyTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="viewed-tab" data-bs-toggle="tab" data-bs-target="#viewed" type="button">
+                        <i class="fas fa-eye me-2"></i>Просмотренные
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="liked-tab" data-bs-toggle="tab" data-bs-target="#liked" type="button">
+                        <i class="fas fa-heart me-2 text-danger"></i>Понравившиеся
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="disliked-tab" data-bs-toggle="tab" data-bs-target="#disliked" type="button">
+                        <i class="fas fa-times me-2 text-secondary"></i>Непонравившиеся
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="likes-tab" data-bs-toggle="tab" data-bs-target="#likes" type="button">
+                        <i class="fas fa-star me-2 text-warning"></i>Лайки моего профиля
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Содержимое вкладок -->
+    <div class="tab-content" id="historyTabsContent">
+        <!-- Просмотренные профили -->
+        <div class="tab-pane fade show active" id="viewed" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Недавно просмотренные профили</h5>
+                </div>
+                <div class="card-body">
+                    {% if viewed_profiles %}
+                    <div class="row">
+                        {% for profile in viewed_profiles %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card profile-card h-100">
+                                <img src="{{ profile.photo }}" class="card-img-top" alt="Profile" style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ profile.name }}, {{ profile.age }}</h6>
+                                    <p class="card-text small text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ profile.city }}
+                                    </p>
+                                    <p class="card-text small">{{ profile.status }}</p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary btn-sm view-again" data-user-id="{{ profile.id }}">
+                                            <i class="fas fa-eye me-1"></i>Посмотреть
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <small class="text-muted">Просмотрено: {{ profile.viewed_at }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-eye-slash fa-3x text-muted mb-3"></i>
+                        <h5>История просмотров пуста</h5>
+                        <p class="text-muted">Начните знакомиться с людьми, чтобы заполнить историю</p>
+                        <a href="{% url 'discover' %}" class="btn btn-danger">
+                            <i class="fas fa-search me-2"></i>Начать поиск
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Понравившиеся профили -->
+        <div class="tab-pane fade" id="liked" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Профили, которые вам понравились</h5>
+                </div>
+                <div class="card-body">
+                    {% if liked_profiles %}
+                    <div class="row">
+                        {% for profile in liked_profiles %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card profile-card h-100">
+                                <div class="position-relative">
+                                    <img src="{{ profile.photo }}" class="card-img-top" alt="Profile" style="height: 200px; object-fit: cover;">
+                                    <span class="position-absolute top-0 end-0 bg-danger text-white p-1 m-1 rounded">
+                                        <i class="fas fa-heart"></i>
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ profile.name }}, {{ profile.age }}</h6>
+                                    <p class="card-text small text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ profile.city }}
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        {% if profile.is_match %}
+                                        <span class="badge bg-success mb-2">Взаимный лайк</span>
+                                        <button class="btn btn-outline-success btn-sm start-chat" data-user-id="{{ profile.id }}">
+                                            <i class="fas fa-comment me-1"></i>Написать
+                                        </button>
+                                        {% else %}
+                                        <span class="badge bg-warning mb-2">Ожидание ответа</span>
+                                        <button class="btn btn-outline-secondary btn-sm" disabled>
+                                            Ожидание...
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <small class="text-muted">Лайкнут: {{ profile.liked_at }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                        <h5>Вы еще никому не поставили лайк</h5>
+                        <p class="text-muted">Найдите интересных людей и отметьте их лайком</p>
+                        <a href="{% url 'discover' %}" class="btn btn-danger">
+                            <i class="fas fa-search me-2"></i>Найти людей
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Непонравившиеся профили -->
+        <div class="tab-pane fade" id="disliked" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Профили, которые вам не понравились</h5>
+                </div>
+                <div class="card-body">
+                    {% if disliked_profiles %}
+                    <div class="row">
+                        {% for profile in disliked_profiles %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card profile-card h-100">
+                                <div class="position-relative">
+                                    <img src="{{ profile.photo }}" class="card-img-top" alt="Profile" style="height: 200px; object-fit: cover;">
+                                    <span class="position-absolute top-0 end-0 bg-secondary text-white p-1 m-1 rounded">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ profile.name }}, {{ profile.age }}</h6>
+                                    <p class="card-text small text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ profile.city }}
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary btn-sm reconsider" data-user-id="{{ profile.id }}">
+                                            <i class="fas fa-redo me-1"></i>Пересмотреть
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <small class="text-muted">Дизлайкнут: {{ profile.disliked_at }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-times fa-3x text-muted mb-3"></i>
+                        <h5>Нет непонравившихся профилей</h5>
+                        <p class="text-muted">Это хорошо! Значит вы находите интересных людей</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Лайки вашего профиля -->
+        <div class="tab-pane fade" id="likes" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Кому понравился ваш профиль</h5>
+                </div>
+                <div class="card-body">
+                    {% if profile_likes %}
+                    <div class="row">
+                        {% for like in profile_likes %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card profile-card h-100">
+                                <div class="position-relative">
+                                    <img src="{{ like.user_photo }}" class="card-img-top" alt="Profile" style="height: 200px; object-fit: cover;">
+                                    <span class="position-absolute top-0 end-0 bg-info text-white p-1 m-1 rounded">
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ like.user_name }}, {{ like.user_age }}</h6>
+                                    <p class="card-text small text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ like.user_city }}
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        {% if like.is_match %}
+                                        <span class="badge bg-success mb-2">Взаимный лайк</span>
+                                        <button class="btn btn-outline-success btn-sm start-chat" data-user-id="{{ like.user_id }}">
+                                            <i class="fas fa-comment me-1"></i>Написать
+                                        </button>
+                                        {% else %}
+                                        <button class="btn btn-outline-danger btn-sm like-back" data-user-id="{{ like.user_id }}">
+                                            <i class="fas fa-heart me-1"></i>Ответить лайком
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm dislike-back" data-user-id="{{ like.user_id }}">
+                                            <i class="fas fa-times me-1"></i>Пропустить
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <small class="text-muted">Лайк получен: {{ like.liked_at }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                        <h5>Пока нет лайков вашего профиля</h5>
+                        <p class="text-muted">Обновите фотографии и информацию в профиле, чтобы привлечь внимание</p>
+                        <a href="{% url 'profile' %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Редактировать профиль
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ответить лайком
+    document.querySelectorAll('.like-back').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            // API call to like back
+            console.log('Like back user:', userId);
+        });
+    });
+
+    // Ответить дизлайком
+    document.querySelectorAll('.dislike-back').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            // API call to dislike back
+            console.log('Dislike back user:', userId);
+        });
+    });
+
+    // Пересмотреть профиль
+    document.querySelectorAll('.reconsider').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            // API call to remove from disliked
+            console.log('Reconsider user:', userId);
+        });
+    });
+});
+</script>
+{% endblock %}

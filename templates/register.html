@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveFinder - Регистрация{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="card-title">
+                            <i class="fas fa-heart text-danger me-2"></i>LoveFinder
+                        </h2>
+                        <p class="text-muted">Создайте новый аккаунт</p>
+                    </div>
+
+                    <form id="registerForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label">Имя</label>
+                                    <input type="text" class="form-control" id="firstName" name="first_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label">Фамилия</label>
+                                    <input type="text" class="form-control" id="lastName" name="last_name" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email адрес</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Пароль</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Подтвердите пароль</label>
+                                    <input type="password" class="form-control" id="confirmPassword" name="password2" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="gender" class="form-label">Пол</label>
+                                    <select class="form-select" id="gender" name="gender" required>
+                                        <option value="">Выберите пол</option>
+                                        <option value="M">Мужской</option>
+                                        <option value="F">Женский</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="dateOfBirth" class="form-label">Дата рождения</label>
+                                    <input type="date" class="form-control" id="dateOfBirth" name="birth_date" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="city" class="form-label">Город</label>
+                            <input type="text" class="form-control" id="city" name="city" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="hobbies" class="form-label">Увлечения</label>
+                            <textarea class="form-control" id="hobbies" name="hobbies" rows="3" 
+                                      placeholder="Расскажите о своих увлечениях..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="profilePhoto" class="form-label">Фотография профиля</label>
+                            <input type="file" class="form-control" id="profilePhoto" name="profile_photo" accept="image/*">
+                            <div class="form-text">Рекомендуется квадратное изображение не менее 400x400 пикселей</div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="agreeTerms" name="agree_terms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                Я соглашаюсь с <a href="#" class="text-decoration-none">условиями использования</a> 
+                                и <a href="#" class="text-decoration-none">политикой конфиденциальности</a>
+                            </label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Создать аккаунт
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-0">Уже есть аккаунт?</p>
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary mt-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Войти в аккаунт
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Валидация пароля
+    function validatePassword() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password !== confirmPassword) {
+            alert('Пароли не совпадают!');
+            return false;
+        }
+        
+        if (password.length < 6) {
+            alert('Пароль должен содержать не менее 6 символов');
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Обработка формы регистрации
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!validatePassword()) {
+            return;
+        }
+
+        const formData = new FormData(this);
+        
+        // API call to register
+        fetch('/api/users/register/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+        })
+        .then(response => {
+            if (response.status === 201) {
+                // 201 Created - успешная регистрация
+                return response.json().then(data => {
+                    alert('Регистрация успешна! Теперь вы можете войти в систему.');
+                    window.location.href = '{% url "login" %}';
+                });
+            } else if (response.status === 400) {
+                // 400 Bad Request - ошибки валидации
+                return response.json().then(data => {
+                    let errorMessage = 'Ошибки регистрации:\n';
+                    for (const field in data) {
+                        errorMessage += `• ${field}: ${data[field].join(', ')}\n`;
+                    }
+                    alert(errorMessage);
+                });
+            } else {
+                // Другие ошибки
+                return response.json().then(data => {
+                    throw new Error(data.message || `Ошибка ${response.status}`);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ошибка при регистрации: ' + error.message);
+        });
+    });
+});
+</script>
+{% endblock %}

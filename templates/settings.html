@@ -1,0 +1,438 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveFinder - Настройки{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <!-- Навигация по настройкам -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Настройки</h6>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a class="list-group-item list-group-item-action active" href="#privacy" data-bs-toggle="list">
+                        <i class="fas fa-shield-alt me-2"></i>Приватность
+                    </a>
+                    <a class="list-group-item list-group-item-action" href="#notifications" data-bs-toggle="list">
+                        <i class="fas fa-bell me-2"></i>Уведомления
+                    </a>
+                    <a class="list-group-item list-group-item-action" href="#account" data-bs-toggle="list">
+                        <i class="fas fa-user-cog me-2"></i>Аккаунт
+                    </a>
+                    <a class="list-group-item list-group-item-action" href="#preferences" data-bs-toggle="list">
+                        <i class="fas fa-sliders-h me-2"></i>Предпочтения
+                    </a>
+                    <a class="list-group-item list-group-item-action" href="#danger" data-bs-toggle="list">
+                        <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Опасная зона
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="tab-content">
+                <!-- Настройки приватности -->
+                <div class="tab-pane fade show active" id="privacy">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-shield-alt me-2"></i>Настройки приватности
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="privacySettingsForm">
+                                <div class="mb-4">
+                                    <h6>Видимость профиля</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="profile_visibility" 
+                                               id="visibilityPublic" value="public" checked>
+                                        <label class="form-check-label" for="visibilityPublic">
+                                            Публичный профиль (видят все пользователи)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="profile_visibility" 
+                                               id="visibilityPrivate" value="private">
+                                        <label class="form-check-label" for="visibilityPrivate">
+                                            Приватный профиль (только по приглашению)
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <h6>Кто может вас найти</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="search_by_email" id="searchByEmail">
+                                        <label class="form-check-label" for="searchByEmail">
+                                            Поиск по email
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="search_by_phone" id="searchByPhone">
+                                        <label class="form-check-label" for="searchByPhone">
+                                            Поиск по номеру телефона
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <h6>Блокировки</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">Заблокированные пользователи</label>
+                                        <select class="form-select" multiple>
+                                            <option>user1@example.com</option>
+                                            <option>user2@example.com</option>
+                                        </select>
+                                        <div class="form-text">Выберите пользователей для разблокировки</div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-unlock me-1"></i>Разблокировать выбранных
+                                    </button>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Сохранить настройки
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Настройки уведомлений -->
+                <div class="tab-pane fade" id="notifications">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bell me-2"></i>Настройки уведомлений
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="notificationSettingsForm">
+                                <div class="mb-4">
+                                    <h6>Email уведомления</h6>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="email_likes" id="emailLikes" checked>
+                                        <label class="form-check-label" for="emailLikes">
+                                            Новые лайки
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="email_matches" id="emailMatches" checked>
+                                        <label class="form-check-label" for="emailMatches">
+                                            Взаимные симпатии
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="email_messages" id="emailMessages">
+                                        <label class="form-check-label" for="emailMessages">
+                                            Новые сообщения
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <h6>Push уведомления</h6>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="push_likes" id="pushLikes" checked>
+                                        <label class="form-check-label" for="pushLikes">
+                                            Новые лайки
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="push_matches" id="pushMatches" checked>
+                                        <label class="form-check-label" for="pushMatches">
+                                            Взаимные симпатии
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="push_invitations" id="pushInvitations">
+                                        <label class="form-check-label" for="pushInvitations">
+                                            Приглашения на свидания
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Сохранить настройки
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Настройки аккаунта -->
+                <div class="tab-pane fade" id="account">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-cog me-2"></i>Настройки аккаунта
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="accountSettingsForm">
+                                <div class="mb-4">
+                                    <h6>Основная информация</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email адрес</label>
+                                        <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                                        <div class="form-text">Email нельзя изменить</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Язык</label>
+                                        <select class="form-select" name="language">
+                                            <option value="ru" selected>Русский</option>
+                                            <option value="en">English</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <h6>Смена пароля</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">Текущий пароль</label>
+                                        <input type="password" class="form-control" name="current_password">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Новый пароль</label>
+                                        <input type="password" class="form-control" name="new_password">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Подтвердите новый пароль</label>
+                                        <input type="password" class="form-control" name="confirm_password">
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary">
+                                        <i class="fas fa-key me-2"></i>Сменить пароль
+                                    </button>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Сохранить настройки
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Предпочтения поиска -->
+                <div class="tab-pane fade" id="preferences">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-sliders-h me-2"></i>Предпочтения поиска
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="preferencesForm">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Возрастной диапазон</label>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input type="number" class="form-control" placeholder="От" name="min_age" value="18">
+                                            </div>
+                                            <div class="col">
+                                                <input type="number" class="form-control" placeholder="До" name="max_age" value="35">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Пол</label>
+                                        <select class="form-select" name="preferred_gender">
+                                            <option value="any">Любой</option>
+                                            <option value="M">Мужской</option>
+                                            <option value="F">Женский</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Город</label>
+                                    <input type="text" class="form-control" name="preferred_city" placeholder="Любой город">
+                                </div>
+
+                                <div class="mb-4">
+                                    <h6>Интересы</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="interest_music" id="interestMusic">
+                                        <label class="form-check-label" for="interestMusic">
+                                            Музыка
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="interest_sports" id="interestSports">
+                                        <label class="form-check-label" for="interestSports">
+                                            Спорт
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="interest_travel" id="interestTravel">
+                                        <label class="form-check-label" for="interestTravel">
+                                            Путешествия
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="interest_art" id="interestArt">
+                                        <label class="form-check-label" for="interestArt">
+                                            Искусство
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Сохранить предпочтения
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Опасная зона -->
+                <div class="tab-pane fade" id="danger">
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Опасная зона
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-warning">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-exclamation-circle me-2"></i>Внимание!
+                                </h6>
+                                Эти действия необратимы. Пожалуйста, действуйте осторожно.
+                            </div>
+
+                            <div class="mb-4">
+                                <h6>Удаление аккаунта</h6>
+                                <p class="text-muted">
+                                    При удалении аккаунта все ваши данные будут безвозвратно удалены. 
+                                    Это действие нельзя отменить.
+                                </p>
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                    <i class="fas fa-trash me-2"></i>Удалить аккаунт
+                                </button>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6>Очистка истории</h6>
+                                <p class="text-muted">
+                                    Удалить всю историю просмотров, лайков и matches.
+                                </p>
+                                <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#clearHistoryModal">
+                                    <i class="fas fa-broom me-2"></i>Очистить историю
+                                </button>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6>Экспорт данных</h6>
+                                <p class="text-muted">
+                                    Скачайте копию всех ваших данных в формате JSON.
+                                </p>
+                                <button type="button" class="btn btn-outline-info">
+                                    <i class="fas fa-download me-2"></i>Экспортировать данные
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно удаления аккаунта -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Удаление аккаунта</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Внимание!</strong> Это действие необратимо.
+                </div>
+                <p>Вы уверены, что хотите удалить свой аккаунт? Все ваши данные будут безвозвратно удалены:</p>
+                <ul>
+                    <li>Профиль и фотографии</li>
+                    <li>История matches и лайков</li>
+                    <li>Сообщения и переписки</li>
+                    <li>Настройки и предпочтения</li>
+                </ul>
+                <div class="mb-3">
+                    <label class="form-label">Для подтверждения введите ваш пароль:</label>
+                    <input type="password" class="form-control" id="confirmPassword">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteAccount">
+                    <i class="fas fa-trash me-2"></i>Удалить аккаунт
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно очистки истории -->
+<div class="modal fade" id="clearHistoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Очистка истории</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите очистить всю историю?</p>
+                <ul>
+                    <li>История просмотров</li>
+                    <li>Список лайков и дизлайков</li>
+                    <li>История matches</li>
+                </ul>
+                <p class="text-muted">Это действие нельзя отменить.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-warning" id="confirmClearHistory">
+                    <i class="fas fa-broom me-2"></i>Очистить историю
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Сохранение настроек
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // API call to save settings
+            console.log('Saving settings...');
+        });
+    });
+
+    // Удаление аккаунта
+    document.getElementById('confirmDeleteAccount').addEventListener('click', function() {
+        const password = document.getElementById('confirmPassword').value;
+        if (password) {
+            // API call to delete account
+            console.log('Deleting account...');
+        } else {
+            alert('Пожалуйста, введите пароль для подтверждения');
+        }
+    });
+
+    // Очистка истории
+    document.getElementById('confirmClearHistory').addEventListener('click', function() {
+        // API call to clear history
+        console.log('Clearing history...');
+    });
+});
+</script>
+{% endblock %}
