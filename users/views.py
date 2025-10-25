@@ -123,17 +123,17 @@ class UserPhotoViewSet(viewsets.ModelViewSet):
             print(f"🎯 Профиль создан при загрузке фото для {self.request.user.username}")
         serializer.save(user_profile=user_profile)
     
-class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = 'profile.html'
+#class ProfileView(LoginRequiredMixin, TemplateView):
+    #template_name = 'profile.html'
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    #def get_context_data(self, **kwargs):
+        #context = super().get_context_data(**kwargs)
         # ГАРАНТИРУЕМ что профиль существует
-        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
-        if created:
-            print(f"🎯 Профиль создан через ProfileView для {self.request.user.username}")
-        context['user_profile'] = profile
-        return context
+        #profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        #if created:
+            #print(f"🎯 Профиль создан через ProfileView для {self.request.user.username}")
+        #context['user_profile'] = profile
+       # return context
     
 def check_auth(request):
     """
@@ -151,30 +151,30 @@ def check_auth(request):
         }, status=401)
 
 @method_decorator(login_required, name='dispatch')
-class ProfileView(TemplateView):
-    template_name = 'profile.html'
-    @api_view(['POST'])
-    @permission_classes([])  # Разрешить доступ без аутентификации
-    def verify_token(request):
-        """Проверка валидности access token"""
-        token = request.data.get('token')
+#class ProfileView(TemplateView):
+    #template_name = 'profile.html'
+    #@api_view(['POST'])
+    #@permission_classes([])  # Разрешить доступ без аутентификации
+    #def verify_token(request):
+     #   """Проверка валидности access token"""
+     #   token = request.data.get('token')
         
-        if not token:
-            return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+      #  if not token:
+      #      return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
         
-        try:
+       # try:
             # Проверяем токен
-            access_token = AccessToken(token)
+        #    access_token = AccessToken(token)
             # Если токен валиден, возвращаем успех
-            return Response({
-                'valid': True,
-                'user_id': access_token['user_id']
-            }, status=status.HTTP_200_OK)
-        except TokenError as e:
-            return Response({
-                'valid': False,
-                'error': str(e)
-            }, status=status.HTTP_401_UNAUTHORIZED)
+         #   return Response({
+          #      'valid': True,
+          #      'user_id': access_token['user_id']
+           # }, status=status.HTTP_200_OK)
+        #except TokenError as e:
+         #   return Response({
+          #      'valid': False,
+           #     'error': str(e)
+            #}, status=status.HTTP_401_UNAUTHORIZED)
         
 @api_view(['GET'])
 def verify_token(request):

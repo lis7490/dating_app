@@ -1,4 +1,6 @@
 from django.views.generic import TemplateView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 class ProfileView(LoginRequiredMixin, TemplateView):
@@ -6,7 +8,5 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_profile = self.request.user.userprofile
-        context['user_profile'] = user_profile
-        context['photos'] = user_profile.photos.all()
+        # Добавляем дополнительный контекст если нужно
         return context

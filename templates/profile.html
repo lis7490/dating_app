@@ -4,6 +4,16 @@
 
 {% block content %}
 <div class="container py-4">
+    <!-- Отладочная информация -->
+    <div class="alert alert-info mb-4">
+        <h5>🔧 Отладка загрузки фото</h5>
+        <p><strong>MEDIA_URL:</strong> {{ MEDIA_URL }}</p>
+        <p><strong>Всего фото в шаблоне Django:</strong> {{ user.profile.photos.all|length }}</p>
+        <div id="apiPhotosInfo">
+            <p>Загрузка информации через API...</p>
+        </div>
+    </div>
+
     <div class="row">
         <!-- Основная информация -->
         <div class="col-lg-4 mb-4">
@@ -145,36 +155,12 @@
                     </div>
                     <div class="card-body">
                         <div class="row" id="photo-gallery">
-                            {% for photo in user.profile.photos.all %}
-                            <div class="col-lg-4 col-md-6 mb-3">
-                                <div class="photo-container position-relative">
-                                    <img src="{{ photo.image.url }}" class="img-fluid rounded" 
-                                         style="height: 200px; width: 100%; object-fit: cover; cursor: pointer;"
-                                         data-bs-toggle="modal" data-bs-target="#photoModal"
-                                         data-photo-src="{{ photo.image.url }}"
-                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSI+0J7RgtC/0YDQsNCy0LvQtdC90Lg8L3RleHQ+Cjwvc3ZnPg=='">
-                                    {% if photo.is_main %}
-                                    <span class="position-absolute top-0 start-0 badge bg-primary m-1">Основная</span>
-                                    {% endif %}
-                                    <div class="position-absolute top-0 end-0 m-1">
-                                        <button class="btn btn-sm btn-outline-danger delete-photo" data-photo-id="{{ photo.id }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                    <div class="mt-2 text-center">
-                                        <small class="text-muted">{{ photo.caption|default:"Без названия" }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            {% empty %}
                             <div class="col-12 text-center py-4">
-                                <i class="fas fa-images fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Фотографии не добавлены</p>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#photoManagerModal">
-                                    <i class="fas fa-plus me-2"></i>Добавить первую фотографию
-                                </button>
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Загрузка фото...</span>
+                                </div>
+                                <p class="mt-2">Загрузка фотографий через API...</p>
                             </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -480,13 +466,12 @@ function updateProfileUI(profileData) {
                         </button>
                     </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row" id="photo-gallery">
                             <div class="col-12 text-center py-4">
-                                <i class="fas fa-images fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Фотографии не добавлены</p>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#photoManagerModal">
-                                    <i class="fas fa-plus me-2"></i>Добавить первую фотографию
-                                </button>
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Загрузка фото...</span>
+                                </div>
+                                <p class="mt-2">Загрузка фотографий через API...</p>
                             </div>
                         </div>
                     </div>
@@ -516,7 +501,118 @@ function updateProfileUI(profileData) {
         }
         
         console.log('✅ Интерфейс обновлен с данными профиля');
+        
+        // ЗАГРУЖАЕМ ФОТО ПОСЛЕ ОБНОВЛЕНИЯ ИНТЕРФЕЙСА
+        const validToken = localStorage.getItem('accessToken');
+        if (validToken) {
+            loadAndDisplayPhotos(validToken);
+        }
     }
+}
+
+// НОВАЯ ФУНКЦИЯ: Загрузка и отображение фото
+async function loadAndDisplayPhotos(token) {
+    try {
+        const response = await fetch('/api/users/photos/', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const photos = data.results; // ИСПРАВЛЕНИЕ - используем results
+            console.log('📷 Фото загружены:', photos);
+            
+            // Обновляем отладочную информацию
+            const apiPhotosInfo = document.getElementById('apiPhotosInfo');
+            if (apiPhotosInfo) {
+                apiPhotosInfo.innerHTML = `<p><strong>Всего фото через API:</strong> ${photos.length}</p>`;
+            }
+            
+            updatePhotoGallery(photos);
+        } else {
+            console.error('Ошибка загрузки фото:', response.status);
+            updatePhotoGallery([]);
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки фото:', error);
+        updatePhotoGallery([]);
+    }
+}
+
+// НОВАЯ ФУНКЦИЯ: Обновление галереи фото
+function updatePhotoGallery(photos) {
+    const gallery = document.getElementById('photo-gallery');
+    if (!gallery) {
+        console.log('Галерея не найдена');
+        return;
+    }
+    
+    if (photos.length > 0) {
+        gallery.innerHTML = photos.map(photo => `
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="photo-container position-relative">
+                    <img src="${photo.image}" class="img-fluid rounded" 
+                         style="height: 200px; width: 100%; object-fit: cover; cursor: pointer;"
+                         data-bs-toggle="modal" data-bs-target="#photoModal"
+                         data-photo-src="${photo.image}"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSI+0J7RgtC/0YDQsNCy0LvQtdC90Lg8L3RleHQ+Cjwvc3ZnPg=='">
+                    ${photo.is_main ? '<span class="position-absolute top-0 start-0 badge bg-primary m-1">Основная</span>' : ''}
+                    <div class="position-absolute top-0 end-0 m-1">
+                        <button class="btn btn-sm btn-outline-danger delete-photo" data-photo-id="${photo.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <small class="text-muted">${photo.caption || 'Без названия'}</small>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        // Добавляем обработчики для новых кнопок удаления
+        document.querySelectorAll('.delete-photo').forEach(button => {
+            button.addEventListener('click', function() {
+                const photoId = this.dataset.photoId;
+                if (confirm('Удалить эту фотографию?')) {
+                    deletePhoto(photoId);
+                }
+            });
+        });
+    } else {
+        gallery.innerHTML = `
+            <div class="col-12 text-center py-4">
+                <i class="fas fa-images fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Фотографии не добавлены</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#photoManagerModal">
+                    <i class="fas fa-plus me-2"></i>Добавить первую фотографию
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Функция удаления фото
+function deletePhoto(photoId) {
+    const token = localStorage.getItem('accessToken');
+    
+    fetch(`/api/users/photos/${photoId}/`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Фотография удалена');
+            location.reload();
+        } else {
+            throw new Error('Ошибка удаления');
+        }
+    })
+    .catch(error => {
+        alert('Ошибка удаления: ' + error.message);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
@@ -675,34 +771,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     });
 
-    // Удаление фото
-    document.querySelectorAll('.delete-photo').forEach(button => {
-        button.addEventListener('click', function() {
-            const photoId = this.dataset.photoId;
-            
-            if (confirm('Удалить эту фотографию? Это действие нельзя отменить.')) {
-                fetch(`/api/users/photos/${photoId}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': 'Bearer ' + validToken,
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Фотография удалена');
-                        location.reload();
-                    } else {
-                        throw new Error('Ошибка удаления');
-                    }
-                })
-                .catch(error => {
-                    alert('Ошибка удаления: ' + error.message);
-                });
-            }
-        });
-    });
-
     // Сохранение профиля
     document.getElementById('saveProfileChanges').addEventListener('click', function() {
         const formData = new FormData(document.getElementById('profileEditForm'));
@@ -742,5 +810,20 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     });
 });
+
+// Функция для тестирования URL фото
+function testPhotoUrl(url) {
+    fetch(url)
+        .then(response => {
+            if (response.ok) {
+                alert('✅ Фото доступно по URL: ' + url);
+            } else {
+                alert('❌ Ошибка загрузки: ' + response.status + ' - ' + url);
+            }
+        })
+        .catch(error => {
+            alert('❌ Ошибка: ' + error.message + ' - ' + url);
+        });
+}
 </script>
 {% endblock %}
