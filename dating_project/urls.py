@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
+from users.views import check_auth
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +27,7 @@ urlpatterns = [
     path('settings/', TemplateView.as_view(template_name='settings.html'), name='settings'),
     path('login/', TemplateView.as_view(template_name='login.html'), name='login'),
     path('register/', TemplateView.as_view(template_name='register.html'), name='register'),
-    path('check-auth/', views.check_auth, name='check_auth'),
+    path('check-auth/', check_auth, name='check_auth'),
 ]
 
 

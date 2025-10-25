@@ -15,4 +15,5 @@ urlpatterns = [
     path('random-profile/', views.RandomProfileView.as_view(), name='random-profile'),
     path('preferences/', views.UserPreferencesView.as_view(), name='user-preferences'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('verify-token/', views.verify_token, name='verify_token'),
 ]

@@ -7,6 +7,15 @@ from .models import UserProfile, UserPhoto
 from .serializers import *
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
+from rest_framework.decorators import api_view, permission_classes
+
+from rest_framework import status
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 User = get_user_model()
 
@@ -20,11 +29,18 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+    # ГАРАНТИРУЕМ что профиль существует
+        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        if created:
+            print(f"🎯 Профиль создан через API для {self.request.user.username}")
         return UserProfile.objects.filter(user=self.request.user)
 
     @action(detail=False, methods=['get', 'put'])
     def me(self, request):
-        profile = UserProfile.objects.get(user=request.user)
+        # ГАРАНТИРУЕМ что профиль существует перед получением
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+        if created:
+            print(f"🎯 Профиль создан через me() для {request.user.username}")
         
         if request.method == 'GET':
             serializer = UserProfileSerializer(profile)
@@ -42,7 +58,10 @@ class CurrentUserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        return UserProfile.objects.get(user=self.request.user)
+        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        if created:
+            print(f"🎯 Профиль создан через CurrentUserProfileView для {self.request.user.username}")
+        return profile
 
 class RandomProfileView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
@@ -91,30 +110,76 @@ class UserPhotoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Получаем UserProfile текущего пользователя и фильтруем по нему
-        user_profile = UserProfile.objects.get(user=self.request.user)
+        # ГАРАНТИРУЕМ что профиль существует
+        user_profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        if created:
+            print(f"🎯 Профиль создан через UserPhotoViewSet для {self.request.user.username}")
         return UserPhoto.objects.filter(user_profile=user_profile)
 
     def perform_create(self, serializer):
-        # Сохраняем с правильным user_profile
-        user_profile = UserProfile.objects.get(user=self.request.user)
+        # ГАРАНТИРУЕМ что профиль существует
+        user_profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        if created:
+            print(f"🎯 Профиль создан при загрузке фото для {self.request.user.username}")
         serializer.save(user_profile=user_profile)
-
-    @action(detail=True, methods=['post'])
-    def set_main(self, request, pk=None):
-        photo = self.get_object()
-        # Сбрасываем все фото как не основные для этого пользователя
-        user_profile = UserProfile.objects.get(user=request.user)
-        UserPhoto.objects.filter(user_profile=user_profile).update(is_main=False)
-        # Устанавливаем текущее как основное
-        photo.is_main = True
-        photo.save()
-        return Response({'status': 'main photo set'})
     
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_profile'] = self.request.user.userprofile
+        # ГАРАНТИРУЕМ что профиль существует
+        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        if created:
+            print(f"🎯 Профиль создан через ProfileView для {self.request.user.username}")
+        context['user_profile'] = profile
         return context
+    
+def check_auth(request):
+    """
+    Проверка авторизации пользователя
+    """
+    if request.user.is_authenticated:
+        return JsonResponse({
+            'authenticated': True, 
+            'username': request.user.username,
+            'user_id': request.user.id
+        })
+    else:
+        return JsonResponse({
+            'authenticated': False
+        }, status=401)
+
+@method_decorator(login_required, name='dispatch')
+class ProfileView(TemplateView):
+    template_name = 'profile.html'
+    @api_view(['POST'])
+    @permission_classes([])  # Разрешить доступ без аутентификации
+    def verify_token(request):
+        """Проверка валидности access token"""
+        token = request.data.get('token')
+        
+        if not token:
+            return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            # Проверяем токен
+            access_token = AccessToken(token)
+            # Если токен валиден, возвращаем успех
+            return Response({
+                'valid': True,
+                'user_id': access_token['user_id']
+            }, status=status.HTTP_200_OK)
+        except TokenError as e:
+            return Response({
+                'valid': False,
+                'error': str(e)
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        
+@api_view(['GET'])
+def verify_token(request):
+    """Простая проверка аутентификации"""
+    if request.user.is_authenticated:
+        return Response({'authenticated': True, 'user': request.user.username})
+    else:
+        return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
