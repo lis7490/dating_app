@@ -1,10 +1,336 @@
 {% extends 'base.html' %}
 
-{% block title %}LoveFinder - Дашборд{% endblock %}
+{% block title %}LoveFinder - Командный центр{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-section {
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d2d2d 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23dc2626" fill-opacity="0.03" points="0,1000 1000,0 1000,1000"/></svg>');
+    background-size: cover;
+}
+
+.brutal-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #333;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.brutal-card:hover {
+    border-color: #dc2626;
+    box-shadow: 0 15px 40px rgba(220, 38, 38, 0.3);
+    transform: translateY(-2px);
+}
+
+.brutal-text {
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.brutal-btn {
+    border: 2px solid #dc2626;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.brutal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+}
+
+.brutal-btn-primary {
+    background: linear-gradient(45deg, #dc2626, #b91c1c);
+    color: white;
+}
+
+.brutal-btn-outline {
+    background: transparent;
+    color: #dc2626;
+}
+
+.brutal-btn-outline:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #dc2626, #f87171);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    border: 2px solid #333;
+}
+
+.activity-item {
+    border-left: 3px solid #dc2626;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.radar-scan {
+    position: relative;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.radar-scan::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: conic-gradient(from 0deg, transparent, #dc2626, transparent);
+    animation: radar-rotate 4s linear infinite;
+}
+
+@keyframes radar-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-online {
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981;
+}
+
+.status-offline {
+    background: #6b7280;
+}
+
+.status-warning {
+    background: #f59e0b;
+    box-shadow: 0 0 10px #f59e0b;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<a href="{% url 'profile' %}" class="btn btn-primary" onclick="return checkAndNavigate()">
-    <i class="fas fa-user me-2"></i>Мой профиль</a>
+<section class="dashboard-section text-white">
+    <div class="container py-5">
+        <!-- Заголовок и навигация -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="display-4 fw-bold brutal-text">
+                            <span class="text-danger">КОМАНДНЫЙ</span> ЦЕНТР
+                        </h1>
+                        <p class="lead text-light">Мониторинг оперативной обстановки</p>
+                    </div>
+                    <a href="{% url 'profile' %}" class="btn brutal-btn brutal-btn-outline btn-lg" onclick="return checkAndNavigate()">
+                        <i class="fas fa-helmet-safety me-2"></i>МОЯ БАЗА
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статистика системы -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="brutal-text mb-4">СТАТУС СИСТЕМЫ</h2>
+                <div class="row g-4">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="brutal-card p-4 text-center">
+                            <div class="stat-number" id="viewsCount">12</div>
+                            <p class="brutal-text mb-0">РАЗВЕДКА ЦЕЛЕЙ</p>
+                            <small class="text-muted">Новых просмотров профиля</small>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="brutal-card p-4 text-center">
+                            <div class="stat-number" id="matchesCount">5</div>
+                            <p class="brutal-text mb-0">КОНТАКТЫ</p>
+                            <small class="text-muted">Взаимных соединений</small>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="brutal-card p-4 text-center">
+                            <div class="stat-number" id="messagesCount">3</div>
+                            <p class="brutal-text mb-0">ПЕРЕХВАЧЕНЫ</p>
+                            <small class="text-muted">Новых сообщений</small>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="brutal-card p-4 text-center">
+                            <div class="stat-number" id="totalMatches">24</div>
+                            <p class="brutal-text mb-0">АКТИВНЫЕ СВЯЗИ</p>
+                            <small class="text-muted">Всего стратегических контактов</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Панель быстрого развертывания -->
+            <div class="col-lg-8">
+                <div class="brutal-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="brutal-text mb-0">БЫСТРОЕ РАЗВЕРТЫВАНИЕ</h3>
+                        <span class="status-indicator status-online"></span>
+                    </div>
+                    
+                    <div class="radar-scan mb-4"></div>
+                    
+                    <p class="text-light mb-4">
+                        Система готова к поиску стратегических партнеров. 
+                        Активируйте сканирование для обнаружения совместимых целей.
+                    </p>
+                    
+                    <div class="d-grid">
+                        <a href="{% url 'discover' %}" class="btn brutal-btn brutal-btn-primary btn-lg py-3">
+                            <i class="fas fa-crosshairs me-2"></i>АКТИВИРОВАТЬ СКАНИРОВАНИЕ
+                        </a>
+                    </div>
+
+                    <!-- Быстрые действия -->
+                    <div class="row mt-4 g-2">
+                        <div class="col-md-4">
+                            <a href="{% url 'matches' %}" class="btn brutal-btn brutal-btn-outline w-100">
+                                <i class="fas fa-satellite-dish me-2"></i>КОНТАКТЫ
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'history' %}" class="btn brutal-btn brutal-btn-outline w-100">
+                                <i class="fas fa-history me-2"></i>АРХИВ
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'settings' %}" class="btn brutal-btn brutal-btn-outline w-100">
+                                <i class="fas fa-cogs me-2"></i>СИСТЕМА
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Оперативный журнал -->
+            <div class="col-lg-4">
+                <div class="brutal-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="brutal-text mb-0">ОПЕРАТИВНЫЙ ЖУРНАЛ</h3>
+                        <span class="status-indicator status-warning"></span>
+                    </div>
+
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <small class="text-danger brutal-text">СЕЙЧАС</small>
+                            <p class="mb-1 text-light">Объект "МАРИЯ" провел разведку вашего профиля</p>
+                            <small class="text-muted">Уровень угрозы: НИЗКИЙ</small>
+                        </div>
+                        <div class="activity-item">
+                            <small class="text-warning brutal-text">2 ЧАСА НАЗАД</small>
+                            <p class="mb-1 text-light">Установлен контакт с объектом "АЛЕКСЕЙ"</p>
+                            <small class="text-muted">Статус: АКТИВНЫЙ ДИАЛОГ</small>
+                        </div>
+                        <div class="activity-item">
+                            <small class="text-info brutal-text">СЕГОДНЯ 08:30</small>
+                            <p class="mb-1 text-light">Получено зашифрованное сообщение</p>
+                            <small class="text-muted">Требуется расшифровка</small>
+                        </div>
+                        <div class="activity-item">
+                            <small class="text-success brutal-text">ВЧЕРА 22:15</small>
+                            <p class="mb-1 text-light">Профиль обновлен. Новая тактическая информация</p>
+                            <small class="text-muted">Статус: СИНХРОНИЗИРОВАНО</small>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn brutal-btn brutal-btn-outline btn-sm">
+                            <i class="fas fa-sync-alt me-2"></i>ОБНОВИТЬ ЖУРНАЛ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Системные показатели -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="brutal-text mb-4">СИСТЕМНЫЕ ПОКАЗАТЕЛИ</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="brutal-card p-3 text-center">
+                            <div class="feature-icon" style="width: 50px; height: 50px;">
+                                <i class="fas fa-network-wired text-white"></i>
+                            </div>
+                            <h6 class="brutal-text mb-2">СЕТЕВАЯ АКТИВНОСТЬ</h6>
+                            <div class="stat-number">87%</div>
+                            <small class="text-muted">Оптимальная производительность</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="brutal-card p-3 text-center">
+                            <div class="feature-icon" style="width: 50px; height: 50px;">
+                                <i class="fas fa-shield-alt text-white"></i>
+                            </div>
+                            <h6 class="brutal-text mb-2">ЗАЩИТА СИСТЕМЫ</h6>
+                            <div class="stat-number">100%</div>
+                            <small class="text-muted">Все системы защищены</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="brutal-card p-3 text-center">
+                            <div class="feature-icon" style="width: 50px; height: 50px;">
+                                <i class="fas fa-broadcast-tower text-white"></i>
+                            </div>
+                            <h6 class="brutal-text mb-2">СВЯЗЬ</h6>
+                            <div class="stat-number">94%</div>
+                            <small class="text-muted">Стабильное соединение</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
 <script>
 function checkAndNavigate() {
     const accessToken = localStorage.getItem('accessToken');
@@ -14,18 +340,21 @@ function checkAndNavigate() {
     console.log('Refresh Token:', refreshToken);
     
     if (!accessToken) {
-        alert('Требуется авторизация. Перенаправляем на вход.');
+        alert('ТРЕБУЕТСЯ АУТЕНТИФИКАЦИЯ. ПЕРЕХОД НА КОНТРОЛЬНЫЙ ПУНКТ.');
         window.location.href = '{% url "login" %}';
         return false;
     }
     
     // Проверяем валидность токена
-    fetch('/api/users/verify-token/', {
+    fetch('/api/token/verify/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + accessToken
-        }
+        },
+        body: JSON.stringify({
+            token: accessToken
+        })
     })
     .then(response => {
         if (response.ok) {
@@ -53,7 +382,7 @@ function refreshAccessToken() {
         return false;
     }
     
-    fetch('/api/users/token/refresh/', {
+    fetch('/api/token/refresh/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -82,87 +411,30 @@ function refreshAccessToken() {
 function redirectToLogin() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    alert('Сессия истекла. Пожалуйста, войдите снова.');
+    alert('СЕАНС ПРЕРВАН. ТРЕБУЕТСЯ ПОВТОРНАЯ АУТЕНТИФИКАЦИЯ.');
     window.location.href = '{% url "login" %}';
 }
+
+// Обновление статистики в реальном времени
+function updateDashboardStats() {
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (accessToken) {
+        // Здесь можно добавить запросы к API для получения реальной статистики
+        console.log('Updating dashboard statistics...');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateDashboardStats();
+    
+    // Анимация для радарного сканирования
+    const radar = document.querySelector('.radar-scan');
+    if (radar) {
+        setInterval(() => {
+            radar.style.opacity = radar.style.opacity === '0.7' ? '1' : '0.7';
+        }, 2000);
+    }
+});
 </script>
-<div class="container py-4">
-    <div class="row">
-        <!-- Статистика -->
-        <div class="col-12 mb-4">
-            <h2>Моя активность</h2>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="text-primary">12</h3>
-                            <p>Новых просмотров</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="text-success">5</h3>
-                            <p>Взаимных лайков</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="text-warning">3</h3>
-                            <p>Новых сообщений</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="text-info">24</h3>
-                            <p>Всего мэтчей</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Быстрый поиск -->
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Быстрый поиск партнеров</h4>
-                </div>
-                <div class="card-body">
-                    <p>Настройте фильтры для поиска идеальных matches</p>
-                    <a href="{% url 'discover' %}" class="btn btn-danger">
-                        <i class="fas fa-search me-2"></i>Начать поиск
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Последние активности -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Последние активности</h4>
-                </div>
-                <div class="card-body">
-                    <div class="activity-list">
-                        <div class="activity-item mb-2">
-                            <small class="text-muted">Сегодня</small>
-                            <p class="mb-1">Мария оценила ваш профиль</p>
-                        </div>
-                        <div class="activity-item mb-2">
-                            <small class="text-muted">Вчера</small>
-                            <p class="mb-1">У вас новый мэтч с Алексеем</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 {% endblock %}

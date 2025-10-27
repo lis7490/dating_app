@@ -2,93 +2,328 @@
 
 {% block title %}LoveFinder - Вход{% endblock %}
 
+{% block extra_css %}
+<style>
+.login-section {
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d2d2d 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23dc2626" fill-opacity="0.03" points="0,1000 1000,0 1000,1000"/></svg>');
+    background-size: cover;
+}
+
+.brutal-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #333;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.brutal-card:hover {
+    border-color: #dc2626;
+    box-shadow: 0 15px 40px rgba(220, 38, 38, 0.3);
+}
+
+.brutal-text {
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.brutal-btn {
+    border: 2px solid #dc2626;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.brutal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+}
+
+.brutal-btn-primary {
+    background: linear-gradient(45deg, #dc2626, #b91c1c);
+    color: white;
+}
+
+.brutal-btn-outline {
+    background: transparent;
+    color: #dc2626;
+}
+
+.brutal-btn-outline:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.brutal-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #333;
+    color: white;
+    border-radius: 4px;
+}
+
+.brutal-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #dc2626;
+    box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+    color: white;
+}
+
+.brutal-input::placeholder {
+    color: #888;
+}
+
+.input-group-text {
+    background: #333;
+    border: 2px solid #333;
+    color: #dc2626;
+}
+
+.glitch-text {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch-text::before {
+    animation: glitch-1 0.5s infinite linear alternate-reverse;
+    color: #dc2626;
+    z-index: -1;
+}
+
+.glitch-text::after {
+    animation: glitch-2 0.5s infinite linear alternate-reverse;
+    color: #3b82f6;
+    z-index: -2;
+}
+
+@keyframes glitch-1 {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+@keyframes glitch-2 {
+    0% { transform: translate(0); }
+    20% { transform: translate(2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-2px, 2px); }
+    80% { transform: translate(-2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+.demo-card {
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid #dc2626;
+    border-radius: 6px;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    border: 2px solid #333;
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <h2 class="card-title">
-                            <i class="fas fa-heart text-danger me-2"></i>LoveFinder
-                        </h2>
-                        <p class="text-muted">Войдите в свой аккаунт</p>
-                    </div>
+<section class="login-section text-white">
+    <div class="container py-5">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-xl-8">
+                <div class="row">
+                    <!-- Левая часть - форма -->
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <div class="brutal-card p-4 p-md-5">
+                            <div class="text-center mb-4">
+                                <div class="feature-icon">
+                                    <i class="fas fa-fingerprint fa-2x text-white"></i>
+                                </div>
+                                <h2 class="brutal-text mb-2">
+                                    <span class="glitch-text" data-text="ДОСТУП">ДОСТУП</span>
+                                </h2>
+                                <p class="text-light mb-0">Аутентификация в системе LoveFinder</p>
+                            </div>
 
-                    <form id="loginForm">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email адрес</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-envelope"></i>
-                                </span>
-                                <input type="email" class="form-control" id="email" name="email" 
-                                       placeholder="your@email.com" required>
+                            <form id="loginForm">
+                                {% csrf_token %}
+                                
+                                <div class="mb-4">
+                                    <label for="email" class="form-label brutal-text small">EMAIL АДРЕС</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                        <input type="email" class="form-control brutal-input" id="email" name="email" 
+                                               placeholder="your@email.com" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="password" class="form-label brutal-text small">КОД ДОСТУПА</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control brutal-input" id="password" name="password" 
+                                               placeholder="Введите пароль" required>
+                                        <button type="button" class="btn btn-outline-secondary brutal-input" id="togglePassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4 form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me">
+                                    <label class="form-check-label text-light" for="rememberMe">Сохранить сессию</label>
+                                </div>
+
+                                <div class="d-grid mb-4">
+                                    <button type="submit" class="btn brutal-btn brutal-btn-primary btn-lg py-3">
+                                        <i class="fas fa-sign-in-alt me-2"></i>ПОДТВЕРДИТЬ ДОСТУП
+                                    </button>
+                                </div>
+
+                                <div class="text-center">
+                                    <a href="#" class="text-decoration-none text-danger">Восстановить доступ</a>
+                                </div>
+                            </form>
+
+                            <hr class="my-4 border-secondary">
+
+                            <div class="text-center">
+                                <p class="mb-2 text-light">Нет учетной записи?</p>
+                                <a href="{% url 'register' %}" class="btn brutal-btn brutal-btn-outline">
+                                    <i class="fas fa-user-plus me-2"></i>СОЗДАТЬ АККАУНТ
+                                </a>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Пароль</label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-lock"></i>
-                                </span>
-                                <input type="password" class="form-control" id="password" name="password" 
-                                       placeholder="Введите пароль" required>
-                                <button type="button" class="btn btn-outline-secondary" id="togglePassword">
-                                    <i class="fas fa-eye"></i>
-                                </button>
+                        <!-- Demo аккаунты -->
+                        <div class="brutal-card mt-4 p-3 demo-card">
+                            <h6 class="brutal-text mb-3 text-center">ТЕСТОВЫЕ АККАУНТЫ:</h6>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="p-2" style="background: rgba(0,0,0,0.3); border-radius: 4px;">
+                                        <small class="text-warning d-block">user1@demo.com</small>
+                                        <small class="text-muted">demo123</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-2" style="background: rgba(0,0,0,0.3); border-radius: 4px;">
+                                        <small class="text-warning d-block">user2@demo.com</small>
+                                        <small class="text-muted">demo123</small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me">
-                            <label class="form-check-label" for="rememberMe">Запомнить меня</label>
-                        </div>
-
-                        <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-danger btn-lg">
-                                <i class="fas fa-sign-in-alt me-2"></i>Войти
-                            </button>
-                        </div>
-
-                        <div class="text-center">
-                            <a href="#" class="text-decoration-none">Забыли пароль?</a>
-                        </div>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <p class="mb-0">Еще нет аккаунта?</p>
-                        <a href="{% url 'register' %}" class="btn btn-outline-primary mt-2">
-                            <i class="fas fa-user-plus me-2"></i>Создать аккаунт
-                        </a>
                     </div>
-                </div>
-            </div>
 
-            <!-- Demo аккаунты -->
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h6 class="card-title">Demo аккаунты:</h6>
-                    <div class="row">
-                        <div class="col-6">
-                            <small class="text-muted">Email: user1@demo.com</small><br>
-                            <small class="text-muted">Пароль: demo123</small>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-muted">Email: user2@demo.com</small><br>
-                            <small class="text-muted">Пароль: demo123</small>
+                    <!-- Правая часть - информация -->
+                    <div class="col-lg-6">
+                        <div class="ps-lg-4">
+                            <h1 class="display-5 fw-bold brutal-text mb-4">
+                                <span class="text-danger">ДОСТУП</span> К СИСТЕМЕ
+                            </h1>
+                            <p class="lead mb-4 text-light">
+                                LoveFinder — закрытая платформа для сильных личностей. 
+                                Получи доступ к элитному сообществу и начни строить стратегические отношения.
+                            </p>
+
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center">
+                                        <div class="feature-icon" style="width: 50px; height: 50px; margin: 0 1rem 0 0;">
+                                            <i class="fas fa-shield-alt text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="brutal-text mb-1">БЕЗОПАСНОСТЬ</h6>
+                                            <small class="text-light">Военное шифрование данных</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center">
+                                        <div class="feature-icon" style="width: 50px; height: 50px; margin: 0 1rem 0 0;">
+                                            <i class="fas fa-bolt text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="brutal-text mb-1">СКОРОСТЬ</h6>
+                                            <small class="text-light">Мгновенный доступ к системе</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center">
+                                        <div class="feature-icon" style="width: 50px; height: 50px; margin: 0 1rem 0 0;">
+                                            <i class="fas fa-users text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="brutal-text mb-1">СООБЩЕСТВО</h6>
+                                            <small class="text-light">Элитный круг сильных личностей</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 p-4 brutal-card">
+                                <h5 class="brutal-text text-center mb-3">СТАТИСТИКА СИСТЕМЫ</h5>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="text-danger fw-bold fs-3">10K+</div>
+                                        <small class="text-light">АКТИВНЫХ БОЙЦОВ</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-danger fw-bold fs-3">99.9%</div>
+                                        <small class="text-light">НАДЕЖНОСТИ</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-danger fw-bold fs-3">24/7</div>
+                                        <small class="text-light">РАБОТЫ СИСТЕМЫ</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_js %}
@@ -111,8 +346,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
         const loginButton = document.querySelector('#loginForm button[type="submit"]');
+        const originalText = loginButton.innerHTML;
+        
         loginButton.disabled = true;
-        loginButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Вход...';
+        loginButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>ПРОВЕРКА ДОСТУПА...';
 
         // Используем JWT endpoint
         fetch('/api/token/', {
@@ -122,13 +359,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({
-                username: email,  // JWT ожидает username, используем email
+                username: email,
                 password: password
             })
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Ошибка входа: ' + response.statusText);
+                throw new Error('Ошибка доступа: ' + response.statusText);
             }
             return response.json();
         })
@@ -142,12 +379,24 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Ошибка входа: Проверьте email и пароль');
+            alert('ОШИБКА ДОСТУПА: Проверьте email и пароль');
         })
         .finally(() => {
             loginButton.disabled = false;
-            loginButton.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Войти';
+            loginButton.innerHTML = originalText;
         });
+    });
+
+    // Автозаполнение demo аккаунтов для тестирования
+    document.addEventListener('keypress', function(e) {
+        if (e.key === '1' && e.ctrlKey) {
+            document.getElementById('email').value = 'user1@demo.com';
+            document.getElementById('password').value = 'demo123';
+        }
+        if (e.key === '2' && e.ctrlKey) {
+            document.getElementById('email').value = 'user2@demo.com';
+            document.getElementById('password').value = 'demo123';
+        }
     });
 });
 </script>

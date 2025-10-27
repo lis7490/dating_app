@@ -4,15 +4,7 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Отладочная информация -->
-    <div class="alert alert-info mb-4">
-        <h5>🔧 Отладка загрузки фото</h5>
-        <p><strong>MEDIA_URL:</strong> {{ MEDIA_URL }}</p>
-        <p><strong>Всего фото в шаблоне Django:</strong> {{ user.profile.photos.all|length }}</p>
-        <div id="apiPhotosInfo">
-            <p>Загрузка информации через API...</p>
-        </div>
-    </div>
+    
 
     <div class="row">
         <!-- Основная информация -->
@@ -26,17 +18,13 @@
                 <div class="card-body text-center" id="profileMainContent">
                     {% if user.is_authenticated and user.profile %}
                     <div class="mb-3">
-                        {% with main_photo=user.profile.photos.all|first %}
-                        {% if main_photo and main_photo.is_main %}
-                            <img src="{{ main_photo.image.url }}" class="rounded-circle" width="150" height="150" 
-                                 style="object-fit: cover; cursor: pointer;" alt="Profile Photo"
-                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTBkNWZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiI+0JjQvdC+0YMg0L/QvtC00LrQsNC30L3QsDwvdGV4dD4KPC9zdmc+'">
-                        {% else %}
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTBkNWZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiI+0JjQvdC+0YMg0L/QvtC00LrQsNC30L3QsDwvdGV4dD4KPC9zdmc+" 
-                                 class="rounded-circle" width="150" height="150" 
-                                 style="object-fit: cover; cursor: pointer;" alt="Default Profile Photo">
-                        {% endif %}
-                        {% endwith %}
+    <img id="mainProfilePhoto" 
+         src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTBkNWZmIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiI+0JjQvdC+0YMg0L/QvtC00LrQsNC30L3QsDwvdGV4dD4KPC9zdmc+" 
+         class="rounded-circle main-profile-photo" 
+         width="150" height="150" 
+         style="object-fit: cover; cursor: pointer;" 
+         alt="Profile Photo"
+         data-bs-toggle="modal" data-bs-target="#photoModal">
                     </div>
                     <h4>{{ user.get_full_name|default:user.username }}</h4>
                     <p class="text-muted">

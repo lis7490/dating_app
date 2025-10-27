@@ -2,66 +2,310 @@
 
 {% block title %}LoveFinder - Главная{% endblock %}
 
+{% block extra_css %}
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d2d2d 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23dc2626" fill-opacity="0.03" points="0,1000 1000,0 1000,1000"/></svg>');
+    background-size: cover;
+}
+
+.brutal-text {
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.brutal-btn {
+    border: 2px solid #dc2626;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.brutal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+}
+
+.brutal-btn-primary {
+    background: linear-gradient(45deg, #dc2626, #b91c1c);
+    color: white;
+}
+
+.brutal-btn-outline {
+    background: transparent;
+    color: #dc2626;
+}
+
+.brutal-btn-outline:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: #dc2626;
+    box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    border: 3px solid #333;
+}
+
+.stats-section {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0c0c0c 100%);
+    border-top: 3px solid #dc2626;
+    border-bottom: 3px solid #dc2626;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #dc2626, #f87171);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glitch-text {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch-text::before {
+    animation: glitch-1 0.5s infinite linear alternate-reverse;
+    color: #dc2626;
+    z-index: -1;
+}
+
+.glitch-text::after {
+    animation: glitch-2 0.5s infinite linear alternate-reverse;
+    color: #3b82f6;
+    z-index: -2;
+}
+
+@keyframes glitch-1 {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+@keyframes glitch-2 {
+    0% { transform: translate(0); }
+    20% { transform: translate(2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-2px, 2px); }
+    80% { transform: translate(-2px, -2px); }
+    100% { transform: translate(0); }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <!-- Hero Section -->
-    <div class="row align-items-center min-vh-75">
-        <div class="col-lg-6">
-            <h1 class="display-4 fw-bold text-dark mb-4">
-                Найди свою <span class="text-danger">вторую половинку</span>
-            </h1>
-            <p class="lead mb-4">
-                LoveFinder помогает людям находить настоящие отношения на основе общих интересов и ценностей.
-            </p>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'discover' %}" class="btn btn-danger btn-lg px-4 me-md-2">
-                        <i class="fas fa-search me-2"></i>Начать поиск
-                    </a>
-                    <a href="{% url 'profile' %}" class="btn btn-outline-danger btn-lg px-4">
-                        <i class="fas fa-user me-2"></i>Мой профиль
-                    </a>
+<!-- Hero Section -->
+<section class="hero-section text-white">
+    <div class="container py-5">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6 position-relative">
+                <h1 class="display-3 fw-bold brutal-text mb-4">
+                    <span class="glitch-text" data-text="НАЙДИ СВОЮ">НАЙДИ СВОЮ</span><br>
+                    <span class="text-danger">СИЛУ</span> В ОТНОШЕНИЯХ
+                </h1>
+                <p class="lead mb-4 fs-5 text-light">
+                    LoveFinder — не очередной сайт знакомств. Это платформа для сильных личностей, 
+                    готовых к настоящим отношениям без компромиссов.
+                </p>
+                <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'discover' %}" class="btn brutal-btn brutal-btn-primary btn-lg px-5 py-3 me-md-3">
+                            <i class="fas fa-crosshairs me-2"></i>В БОЙ
+                        </a>
+                        <a href="{% url 'profile' %}" class="btn brutal-btn brutal-btn-outline btn-lg px-5 py-3">
+                            <i class="fas fa-helmet-safety me-2"></i>МОЯ БАЗА
+                        </a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn brutal-btn brutal-btn-primary btn-lg px-5 py-3 me-md-3">
+                            <i class="fas fa-skull me-2"></i>ПРИСОЕДИНИТЬСЯ
+                        </a>
+                        <a href="{% url 'login' %}" class="btn brutal-btn brutal-btn-outline btn-lg px-5 py-3">
+                            <i class="fas fa-fingerprint me-2"></i>ДОСТУП
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <div class="feature-card">
+                        <img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                             alt="Сильные отношения" 
+                             class="img-fluid rounded shadow-lg"
+                             style="filter: grayscale(100%) contrast(120%);">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section text-white py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="stat-number">10K+</div>
+                <p class="brutal-text fs-6">БОЙЦОВ В СИСТЕМЕ</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number">2.5K+</div>
+                <p class="brutal-text fs-6">УСПЕШНЫХ ОПЕРАЦИЙ</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number">98%</div>
+                <p class="brutal-text fs-6">КОЭФФИЦИЕНТ УСПЕХА</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-number">24/7</div>
+                <p class="brutal-text fs-6">РЕЖИМ БОЕВОЙ ГОТОВНОСТИ</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="fw-bold brutal-text display-5">ТВОИ ТАКТИЧЕСКИЕ ПРЕИМУЩЕСТВА</h2>
+                <p class="lead">Оснащение для построения стратегических отношений</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-crosshairs fa-2x text-white"></i>
+                    </div>
+                    <h4 class="brutal-text mb-3">ТОЧНЫЙ ПОДБОР</h4>
+                    <p class="mb-0">Боевые алгоритмы вычисляют идеальных партнеров на основе ваших тактических параметров и целей</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt fa-2x text-white"></i>
+                    </div>
+                    <h4 class="brutal-text mb-3">БРОНЯ КОНФИДЕНЦИАЛЬНОСТИ</h4>
+                    <p class="mb-0">Военное шифрование данных. Ваша оперативная информация под надежной защитой</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-tachometer-alt fa-2x text-white"></i>
+                    </div>
+                    <h4 class="brutal-text mb-3">МГНОВЕННЫЙ РЕАГИРОВАНИЕ</h4>
+                    <p class="mb-0">Система быстрого развертывания контактов. Никаких задержек в коммуникации</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-2">
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-network fa-2x text-white"></i>
+                    </div>
+                    <h4 class="brutal-text mb-3">СТРАТЕГИЧЕСКАЯ СЕТЬ</h4>
+                    <p class="mb-0">Доступ к элитному сообществу целеустремленных личностей</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-secret fa-2x text-white"></i>
+                    </div>
+                    <h4 class="brutal-text mb-3">СКРЫТЫЙ РЕЖИМ</h4>
+                    <p class="mb-0">Возможность ведения разведки без раскрытия своей позиции</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-medal fa-2x text-white"></i>
+                    </div>
+                    <h4 class="brutal-text mb-3">ЭЛИТНЫЙ СТАТУС</h4>
+                    <p class="mb-0">Докажи свою ценность и получи доступ к премиум-функциям системы</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-12">
+                <h3 class="brutal-text display-6 text-white mb-4">ГОТОВ ВСТУПИТЬ В БОЙ?</h3>
+                <p class="lead text-white mb-4">Присоединяйся к элитному подразделению LoveFinder сегодня</p>
+                {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-dark btn-lg px-5 py-3 brutal-btn">
+                    <i class="fas fa-flag me-2"></i>ЗАНЯТЬ ПОЗИЦИЮ
+                </a>
                 {% else %}
-                    <a href="{% url 'register' %}" class="btn btn-danger btn-lg px-4 me-md-2">
-                        <i class="fas fa-user-plus me-2"></i>Начать бесплатно
-                    </a>
-                    <a href="{% url 'login' %}" class="btn btn-outline-danger btn-lg px-4">
-                        <i class="fas fa-sign-in-alt me-2"></i>Войти
-                    </a>
+                <a href="{% url 'discover' %}" class="btn btn-dark btn-lg px-5 py-3 brutal-btn">
+                    <i class="fas fa-crosshairs me-2"></i>ПЕРЕХОДИТЬ В НАСТУПЛЕНИЕ
+                </a>
                 {% endif %}
             </div>
         </div>
-        <div class="col-lg-6">
-            <img src="https://via.placeholder.com/600x400" alt="Dating App" class="img-fluid rounded shadow">
-        </div>
     </div>
-
-    <!-- Features Section -->
-    <div class="row py-5">
-        <div class="col-12 text-center mb-5">
-            <h2 class="fw-bold">Почему выбирают LoveFinder?</h2>
-        </div>
-        <div class="col-md-4 text-center">
-            <div class="feature-icon mb-3">
-                <i class="fas fa-heart fa-3x text-danger"></i>
-            </div>
-            <h4>Умный подбор</h4>
-            <p>Алгоритмы подбирают партнеров на основе ваших интересов и предпочтений</p>
-        </div>
-        <div class="col-md-4 text-center">
-            <div class="feature-icon mb-3">
-                <i class="fas fa-shield-alt fa-3x text-primary"></i>
-            </div>
-            <h4>Безопасность</h4>
-            <p>Ваши данные защищены, а общение проходит в безопасной среде</p>
-        </div>
-        <div class="col-md-4 text-center">
-            <div class="feature-icon mb-3">
-                <i class="fas fa-users fa-3x text-success"></i>
-            </div>
-            <h4>Сообщество</h4>
-            <p>Тысячи реальных людей ищут серьезные отношения</p>
-        </div>
-    </div>
-</div>
+</section>
 {% endblock %}

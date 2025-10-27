@@ -4,7 +4,6 @@ from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
-#from users.views import check_auth
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -19,6 +18,7 @@ urlpatterns = [
     
     # Главная и веб-страницы
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('home/', TemplateView.as_view(template_name='home.html'), name='home'),
     path('dashboard/', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),
     path('discover/', TemplateView.as_view(template_name='discover.html'), name='discover'),
     path('matches/', TemplateView.as_view(template_name='matches.html'), name='matches'),
@@ -27,9 +27,11 @@ urlpatterns = [
     path('settings/', TemplateView.as_view(template_name='settings.html'), name='settings'),
     path('login/', TemplateView.as_view(template_name='login.html'), name='login'),
     path('register/', TemplateView.as_view(template_name='register.html'), name='register'),
-    #path('check-auth/', check_auth, name='check_auth'),
+    path('check-auth/', TemplateView.as_view(template_name='chec_auth.html'), name='check_auth'),
+    
+    # Добавьте если есть эти страницы
+    path('base/', TemplateView.as_view(template_name='base.html'), name='base'),
 ]
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
